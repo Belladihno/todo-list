@@ -61,6 +61,7 @@ button {
     font-size: 16px;
     cursor: pointer;
     border-radius: 40px;
+    
 }
 ul li {
     display: grid;
@@ -145,6 +146,20 @@ ul li button {
 
 ul li span:hover {
     background: #edeef0;
+}
+
+@media (max-width: 600px) {
+    button {
+        padding: 10px 20px;
+        font-size: 12px;
+    }
+    ul li span {
+        font-size: 16px;
+        line-height: 40px;
+    }
+    ul li button {
+        padding: 10px 15px;
+    }
 }
 
 
