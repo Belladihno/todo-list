@@ -17,11 +17,11 @@ const addTask = () => {
     const saveButton = document.createElement('button');
 
     editButton.innerHTML = 'Edit';
-    editButton.onclick = () => edit(li, editButton, saveButton);
+    editButton.addEventListener('click', () => edit(li, editButton, saveButton));
     Task.appendChild(editButton);
 
     saveButton.innerHTML = 'Save';
-    saveButton.onclick = () => saveTask(li, editButton, saveButton);
+    saveButton.addEventListener('click', () => saveTask(li, editButton, saveButton));
     saveButton.id = 'save';
     saveButton.style.backgroundColor = 'green';
     saveButton.style.display = 'none'
@@ -29,26 +29,28 @@ const addTask = () => {
 
     span.innerHTML = '\u00d7';
     span.className = 'delete';
-    span.onclick = () => li.remove();
+    span.addEventListener('click', () =>{
+      li.remove();
+      saveData();
+    });
     Task.appendChild(span);
     
     li.appendChild(Task);
   }
   inputBox.value = '';
-  saveData()
-};
+  saveData();
+}
 const edit = (li, editButton, saveButton) => {
   const originalText = li.firstChild.textContent;
   const editInput = document.createElement('input');
   editInput.type = 'text';
   editInput.value = originalText;
   editInput.style.display = 'inline';
-
   li.firstChild.replaceWith(editInput);
 
   editButton.style.display = 'none';
   saveButton.style.display = 'inline-block';
-  saveData()
+  // saveData()
 };
 const saveTask = (li, editButton, saveButton) => {
   const editInput = li.firstChild;
@@ -63,28 +65,50 @@ const saveTask = (li, editButton, saveButton) => {
   saveData()
 }
 
-listContainer.addEventListener(
-  'click',
-  (e, li) => {
-    if (e.target.tagName === 'LI') {
-      e.target.classList.toggle('checked');
-      saveData()
-    } else if (e.target.tagName === 'SPAN') {
-      e.target.parentElement.parentElement.remove();
-      saveData()
-    } 
-    
-  },
-  false
-);  
-
 const saveData = () => {
   localStorage.setItem('data', listContainer.innerHTML);
 };
 
 const showTask = () => {
   listContainer.innerHTML = localStorage.getItem('data');
+
+  document.querySelectorAll('li').forEach((li) => {
+    const editButton = li.querySelector('button:nth-of-type(1)');
+    const saveButton = li.querySelector('button:nth-of-type(2)');
+    const deleteButton = li.querySelector('span.delete');
+
+    if (editButton) {
+      editButton.addEventListener('click', () => edit(li, editButton, saveButton));
+    }
+    
+    if (saveButton) {
+      saveButton.addEventListener('click', () => saveTask(li, editButton, saveButton));
+    }
+
+    if (deleteButton) {
+      deleteButton.addEventListener('click', () => {
+        li.remove();
+        saveData();
+      });
+    }
+  });
 };
 showTask()
+
+listContainer.addEventListener(
+  'click',
+  (e, li) => {
+    if (e.target.tagName === 'LI') {
+      e.target.classList.toggle('checked');
+      saveData()
+    } 
+    else if (e.target.className === 'delete') {
+      e.target.parentElement.parentElement.remove();
+      saveData()
+    } 
+    
+  },
+  false
+); 
 
 button.addEventListener('click', addTask);
